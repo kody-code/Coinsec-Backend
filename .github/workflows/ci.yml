@@ -2,9 +2,15 @@ name: CI Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
+    paths:
+      - 'src/**'
+      - '.github/**'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
+    paths:
+      - 'src/**'
+      - '.github/**'
 
 jobs:
   build:
