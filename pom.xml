@@ -10,13 +10,15 @@
     </parent>
     <groupId>com.kody</groupId>
     <artifactId>Coinsec-Backend</artifactId>
-    <version>0.0.1</version>
+    <version>${revision}</version>
     <name>Coinsec-Backend</name>
     <description>CoinSec-Backend</description>
     <properties>
         <java.version>25</java.version>
         <!-- 添加 commons-lang3 版本属性以解决安全漏洞 -->
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <!-- 项目版本 -->
+        <revision>0.0.1</revision>
     </properties>
     <dependencies>
         <dependency>
