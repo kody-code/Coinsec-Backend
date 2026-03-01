@@ -35,3 +35,4 @@ jobs:
         with:
           name: coinsec-backend-jar
           path: target/*.jar
+          retention-days: 3
