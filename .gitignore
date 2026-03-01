@@ -36,6 +36,4 @@ build/
 logs/
 generator/
 
-application-test.yaml
-
 .lingma/
