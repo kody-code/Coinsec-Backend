@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: CoinSec-Backend
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/coinsec_db
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+sa-token:
+  token-name: coinsec
+  timeout: 2592000
+  active-timeout: 604800
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: true
+
+app:
+  username: ${APP_USER}
+  password: ${APP_PASSWORD}
