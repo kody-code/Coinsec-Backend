@@ -27,6 +27,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -55,8 +56,47 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(BusinessException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ApiResponse<Void> handleBusinessException(BusinessException e) {
-		log.warn("业务异常：code={}, message={}", e.getCode(), e.getMessage());
-		return ApiResponse.error(e.getCode(), e.getMessage());
+		// 1. 记录带上下文的日志（便于排查）
+		log.warn("业务异常 [code={}]: {} | context={}",
+				e.getCode(), e.getMessage(), e.getContext());
+		// 2. 将 context 转为结构化错误详情（供前端使用）
+		List<ErrorDetail> details = new ArrayList<>();
+		if (e.getContext() != null) {
+			// 情况A：context 包含字段级错误（如验证失败）
+			if (e.getContext().containsKey("fieldErrors")) {
+				List<Map<String, String>> errors = (List<Map<String, String>>) e.getContext().get("fieldErrors");
+				errors.forEach(err -> details.add(
+						ErrorDetail.ofField(err.get("field"), err.get("message"))
+				));
+			}
+			// 情况B：通用 context 转为全局错误（带元数据）
+			else {
+				details.add(ErrorDetail.ofGlobal(
+						e.getMessage(),
+						e.getContext()
+				));
+			}
+		}
+
+		// 3. 返回标准化响应（含结构化错误）
+		return details.isEmpty()
+				? ApiResponse.error(e.getCode(), e.getMessage())
+				: createErrorResponse(e.getCode(), e.getMessage(), details);
+	}
+
+	/**
+	 * 创建带错误详情的错误响应
+	 *
+	 * @param code    状态码
+	 * @param message 错误消息
+	 * @param details 错误详情列表
+	 *
+	 * @return 错误响应
+	 */
+	private ApiResponse<Void> createErrorResponse(Integer code, String message, List<ErrorDetail> details) {
+		ApiResponse<Void> response = new ApiResponse<>(code, message, null);
+		response.setErrors(details);
+		return response;
 	}
 
 	// ================== 2. 登陆验证 ==================

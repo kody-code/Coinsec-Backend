@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 /**
  * <p>
  * 错误详情类 用于描述具体的错误信息，包括出错字段和错误消息
@@ -58,8 +60,9 @@ public class ErrorDetail {
 	 * 构造函数（全局错误）
 	 *
 	 * @param message 错误消息
+	 * @param context
 	 */
-	public static ErrorDetail ofGlobal(String message) {
+	public static ErrorDetail ofGlobal(String message, Map<String, Object> context) {
 		return new ErrorDetail("", message);
 	}
 

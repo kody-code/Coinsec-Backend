@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 交易记录控制器
+ * 交易记录管理接口
  * </p>
  *
  * @author kody
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/category")
-@Tag(name = "交易记录管理接口", description = "交易记录管理接口, 包含创建、查询、更新、删除等操作")
-public class TransactionController {
+@RequestMapping("/api/reports")
+@Tag(name = "报表", description = "报表接口")
+public class ReportsController {
 }
