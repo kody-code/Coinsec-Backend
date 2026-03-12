@@ -1,20 +1,21 @@
 package com.kody.coinsec.backend.core.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.kody.coinsec.backend.common.response.ApiResponse;
+import com.kody.coinsec.backend.common.response.ResponseCode;
+import com.kody.coinsec.backend.common.utils.PasswordUtil;
 import com.kody.coinsec.backend.core.entity.dto.auth.LoginDto;
 import com.kody.coinsec.backend.core.entity.vo.auth.LoginVo;
-import com.kody.coinsec.backend.core.exception.NotImplementedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 /**
  * <p>
@@ -32,6 +33,12 @@ import java.util.Map;
 @Tag(name = "认证接口", description = "用户注册、登录、信息管理等相关接口")
 public class AuthController {
 
+	@Value("${app.username}")
+	private String username;
+
+	@Value("${app.password}")
+	private String password;
+
 	/**
 	 * 登录
 	 *
@@ -42,10 +49,18 @@ public class AuthController {
 	@PostMapping("/login")
 	@Operation(summary = "登录", description = "用户登录接口")
 	public ApiResponse<LoginVo> login(@Valid @RequestBody LoginDto loginDto) {
-		throw new NotImplementedException(Map.of(
-				"username", loginDto.getUsername(),
-				"password", loginDto.getPassword()
-		));
+		log.info("登录参数：{}", loginDto);
+		if (username.equals(loginDto.getUsername()) && PasswordUtil.verify(loginDto.getPassword(), password)) {
+			StpUtil.login(0);
+			return ApiResponse.success(
+					new LoginVo()
+							.setUsername(loginDto.getUsername())
+							.setTokenName(StpUtil.getTokenName())
+							.setTokenValue(StpUtil.getTokenValue())
+			);
+		} else {
+			return ApiResponse.error(ResponseCode.LOGIN_FAILED);
+		}
 	}
 
 	/**
@@ -56,6 +71,7 @@ public class AuthController {
 	@PostMapping("/logout")
 	@Operation(summary = "登出", description = "用户登出接口")
 	public ApiResponse<Void> logout() {
-		throw new NotImplementedException(Map.of());
+		StpUtil.logout();
+		return ApiResponse.success();
 	}
 }
